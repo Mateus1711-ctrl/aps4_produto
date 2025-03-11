@@ -49,4 +49,4 @@ jobs:
           script: |
             docker stop produto || true
             docker rm --force produto || true
-            docker run -d -p 8082:8080 --name produto --network=rede mateus1711/produto-ci:${{ github.sha }}
+            docker run -d -p 8082:8082 --name produto --network=rede mateus1711/produto-ci:${{ github.sha }}
