@@ -1,37 +1,30 @@
 package br.insper.produto;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/produto")
+@RequestMapping("/produtos")
 public class ProdutoController {
 
-    @Autowired
-    private ProdutoService produtoService;
+    private final ProdutoService produtoService;
 
-    @PostMapping
-    public Produto criarProduto(@RequestBody Produto produto) {
-        return produtoService.salvarProduto(produto);
+    public ProdutoController(ProdutoService produtoService) {
+        this.produtoService = produtoService;
     }
 
-  
-    @GetMapping("/{id}")
-    public Produto obterProduto(@PathVariable String id) {
-        return produtoService.getProduto(id);
-    }
-
-  
+    // GET: Aberto a qualquer usuário autenticado (ou público, conforme a política da aplicação de usuário)
     @GetMapping
-    public List<Produto> listarProdutos() {
-        return produtoService.listarProdutos();
+    public ResponseEntity<List<Produto>> listarProdutos() {
+        List<Produto> produtos = produtoService.listar();
+        return ResponseEntity.ok(produtos);
     }
 
-    
-    @PutMapping("/{id}/decrement")
-    public Produto decrementarEstoque(@PathVariable String id, @RequestParam int quantidade) {
-        return produtoService.decrementarEstoque(id, quantidade);
+    // POST: Restrito a usuários ADMIN (verificado na SecurityConfig)
+    @PostMapping
+    public ResponseEntity<Produto> cadastrarProduto(@RequestBody Produto produto) {
+        Produto cadastrado = produtoService.cadastrar(produto);
+        return ResponseEntity.ok(cadastrado);
     }
 }
